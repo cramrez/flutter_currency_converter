@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_currency_converter/src/provider/currency_provider.dart';
+import 'package:flutter_currency_converter/src/repository/implementation/currency_repository.dart';
 
 void main() async {
   final currencyProvider = CurrencyProvider();
+  final currencyRepo = CurrencyRepository(currencyProvider);
 
-  await currencyProvider.latest();
-  print('\n');
-  print('\n');
-  print('\n');
-  await currencyProvider.symbols();
+  final list = await currencyRepo.getCurrencies();
+  list.forEach((element) {
+    print("Currency: ${element.key}, Value: ${element.value}, Name: ${element.name}");
+  });
 
   runApp(MyApp());
 }
