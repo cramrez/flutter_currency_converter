@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
+import 'package:flutter_currency_converter/src/database/currency_database.dart';
 import 'package:flutter_currency_converter/src/provider/currency_provider.dart';
+import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
 import 'package:flutter_currency_converter/src/repository/implementation/currency_repository.dart';
+import 'package:flutter_currency_converter/src/ui/favorites_screen.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   final currencyProvider = CurrencyProvider();
-  final currencyRepo = CurrencyRepository(currencyProvider);
+  final localDatabase = await CurrencyDatabase.init();
 
-  final list = await currencyRepo.getCurrencies();
-  list.forEach((element) {
-    print("Currency: ${element.key}, Value: ${element.value}, Name: ${element.name}");
-  });
+  final currencyRepo = CurrencyRepository(currencyProvider, localDatabase);
+  final currencyCubit = CurrencyCubit(currencyRepo);
 
-  runApp(MyApp());
+  runApp(
+    RepositoryProvider<CurrencyRepositoryBase>(
+      create: (_) => currencyRepo,
+      child: BlocProvider(
+        create: (_) => currencyCubit,
+        child: MyApp(),
+      ),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -32,7 +45,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: Text('Flutter Demo Home Page'),
+      home: FavoritesScreen.create(context),
     );
   }
 }
