@@ -61,7 +61,7 @@ class CurrencyRow extends StatelessWidget {
   const CurrencyRow(this.currency);
 
   Future<void> setEnabled(BuildContext context, Currency currency) =>
-      context.read<CurrencyCubit>().setEnabled(currency, !currency.isEnabled);
+      context.read<CurrencyCubit>().setEnabled(currency.key, !currency.isEnabled);
 
   @override
   Widget build(BuildContext context) {

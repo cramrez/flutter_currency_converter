@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
-import 'package:flutter_currency_converter/src/extensions/list_extension.dart';
 import 'package:flutter_currency_converter/src/extensions/string_extension.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
-import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
 
 class FavoritesCubit extends Cubit<FavoriteState> {
   final CurrencyCubit _currencyCubit;

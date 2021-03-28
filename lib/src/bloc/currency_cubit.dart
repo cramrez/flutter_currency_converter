@@ -25,12 +25,11 @@ class CurrencyCubit extends Cubit<CurrencyState> {
       await _repository.enableCurrency('EUR', 0);
       await _repository.enableCurrency('CNY', 1);
       await _repository.enableCurrency('USD', 2);
-      await _repository.enableCurrency('MXN', 3);
       await _repository.enableCurrency('JPY', 3);
-      await _repository.enableCurrency('MXN', 3);
+      await _repository.enableCurrency('MXN', 4);
     }
 
-    _repository.getCurrencies().listen((currencyList) async {
+    subscription = _repository.getCurrencies().listen((currencyList) async {
       _currencies = currencyList;
       if (_currencies.isNotEmpty) {
         _selected = await _repository.getSelectedCurrency();
@@ -44,26 +43,26 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     });
   }
 
-  Future<void> setEnabled(Currency currency, bool isEnabled) async {
-    if (_selected?.key == currency.key) {
+  Future<void> setEnabled(String key, bool isEnabled) async {
+    if (_selected?.key == key) {
       setWarning('Cannot disable selected currency');
     } else if (!isEnabled && _totalEnabledCurrencies <= 2) {
       setWarning('Cannot disable all currencies');
     } else {
       if (isEnabled) {
-        await _repository.enableCurrency(currency.key, 9999);
+        await _repository.enableCurrency(key, 9999);
       } else {
-        await _repository.disableCurrency(currency.key);
+        await _repository.disableCurrency(key);
       }
-      final edited = await _repository.getCurrency(currency.key);
-      _currencies = List.from(_currencies)..replaceWhere((it) => it.key == currency.key, edited);
+      final edited = await _repository.getCurrency(key);
+      _currencies = List.from(_currencies)..replaceWhere((it) => it.key == key, edited);
       emit(CurrencyReadyState(_currencies, _selected!));
     }
   }
 
   void setWarning(String message) async {
     emit(CurrencyWarningState(message));
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(milliseconds: 100));
     emit(CurrencyReadyState(_currencies, _selected!));
   }
 
@@ -90,7 +89,7 @@ class CurrencyReadyState extends CurrencyState {
   CurrencyReadyState(this.currencies, this.selected);
 
   @override
-  List<Object> get props => [currencies];
+  List<Object> get props => [currencies, selected];
 }
 
 class CurrencyWarningState extends CurrencyState {
