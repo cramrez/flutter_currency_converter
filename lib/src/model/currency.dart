@@ -8,8 +8,9 @@ class Currency extends Equatable {
 
   // Part 2. When I start creating the favorite cubit
   final bool isEnabled;
+  final int position;
 
-  Currency(this.key, this.name, this.value, this.timestamp, {this.isEnabled = false});
+  Currency(this.key, this.name, this.value, this.timestamp, {this.position = -1, this.isEnabled = false});
 
   bool get isBase => key == 'EUR';
 
@@ -30,5 +31,6 @@ class Currency extends Equatable {
         name = dbData['name'],
         value = dbData['value'],
         timestamp = dbData['timestamp'],
-        isEnabled = dbData['isEnabled'] == 1;
+        isEnabled = dbData['isEnabled'] == 1,
+        position = dbData['position'];
 }

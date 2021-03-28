@@ -13,7 +13,7 @@ class CurrencyDatabase {
 
   Future<void> _init() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'currency5.db');
+    final path = join(dbPath, 'currency7.db');
     _database = await openDatabase(path, version: 2, onCreate: (Database db, int version) async {
       await db.execute('''
           CREATE TABLE currency
@@ -50,17 +50,66 @@ class CurrencyDatabase {
   }
 
   Future<List<Currency>> getCurrencies() async {
-    final query = '''SELECT currency.key, currency.name, currency.value, currency.timestamp, 
-    EXISTS(SELECT 1 FROM enabledCurrency WHERE currency.key==key) AS isEnabled FROM currency 
-    ORDER BY isEnabled DESC, currency.key ASC''';
+    final query = '''
+    SELECT 
+      currency.key,
+      currency.name,
+      currency.value, 
+      currency.timestamp,
+      CASE 
+        WHEN enabledCurrency.position IS NULL THEN
+          -1
+        ELSE
+          enabledCurrency.position
+        END position,
+      CASE 
+        WHEN enabledCurrency.key IS NULL THEN
+          0
+        ELSE
+          1
+        END isEnabled
+    FROM
+      currency
+    LEFT JOIN
+      enabledCurrency
+    ON
+      currency.key = enabledCurrency.key
+    ORDER BY 
+      isEnabled DESC,
+      currency.key ASC
+    ''';
     final result = await _database.rawQuery(query);
     return result.map((it) => Currency.fromMapDB(it)).toList();
   }
 
   Future<Currency> getCurrency(String key) async {
-    final query = '''SELECT currency.key, currency.name, currency.value, currency.timestamp, 
-    EXISTS(SELECT 1 FROM enabledCurrency WHERE currency.key==key) AS isEnabled FROM currency 
-    WHERE currency.key=? ORDER BY isEnabled DESC, currency.key ASC''';
+    final query = '''
+    SELECT 
+      currency.key,
+      currency.name,
+      currency.value, 
+      currency.timestamp,
+      CASE 
+        WHEN enabledCurrency.position IS NULL THEN
+          -1
+        ELSE
+          enabledCurrency.position
+        END position,
+      CASE 
+        WHEN enabledCurrency.key IS NULL THEN
+          0
+        ELSE
+          1
+        END isEnabled
+    FROM
+      currency
+    LEFT JOIN
+      enabledCurrency
+    ON
+      currency.key = enabledCurrency.key
+    WHERE
+      currency.key=?
+    ''';
     final result = await _database.rawQuery(query, [key]);
     return Currency.fromMapDB(result.first);
   }

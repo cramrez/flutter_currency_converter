@@ -5,7 +5,7 @@ import 'package:flutter_currency_converter/src/database/currency_database.dart';
 import 'package:flutter_currency_converter/src/provider/currency_provider.dart';
 import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
 import 'package:flutter_currency_converter/src/repository/implementation/currency_repository.dart';
-import 'package:flutter_currency_converter/src/ui/favorites_screen.dart';
+import 'package:flutter_currency_converter/src/ui/converter_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: FavoritesScreen.create(context),
+      home: ConverterScreen.create(context),
     );
   }
 }

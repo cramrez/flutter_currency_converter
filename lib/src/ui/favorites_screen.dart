@@ -8,9 +8,7 @@ import 'package:provider/provider.dart';
 class FavoritesScreen extends StatelessWidget {
   static Widget create(BuildContext context) {
     return BlocProvider(
-      create: (_) => FavoritesCubit(
-        context.read<CurrencyCubit>(),
-      ),
+      create: (_) => FavoritesCubit(context.read<CurrencyCubit>()),
       child: FavoritesScreen(),
     );
   }

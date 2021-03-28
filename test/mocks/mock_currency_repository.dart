@@ -7,13 +7,13 @@ class MockCurrencyRepository extends CurrencyRepositoryBase {
   Currency? _selected;
 
   MockCurrencyRepository() {
-    final _timestamp = 500;
-    final _eur = Currency('EUR', 'Euro', 20, _timestamp);
-    final _cny = Currency('CNY', 'China', 10, _timestamp);
-    final _usd = Currency('USD', 'USA', 15, _timestamp);
-    final _mxn = Currency('JPY', 'Mexico', 5, _timestamp);
-    final _jpy = Currency('MXN', 'Japan', 8, _timestamp);
-    _currencies = [_eur, _cny, _usd, _mxn, _jpy];
+    final timestamp = 500;
+    final eur = Currency('EUR', 'Euro', 20, timestamp);
+    final cny = Currency('CNY', 'China', 10, timestamp);
+    final usd = Currency('USD', 'USA', 15, timestamp);
+    final mxn = Currency('JPY', 'Mexico', 5, timestamp);
+    final jpy = Currency('MXN', 'Japan', 8, timestamp);
+    _currencies = [eur, cny, usd, mxn, jpy];
   }
 
   Future<void> _setEnabled(String key, bool isEnabled) async {

@@ -32,11 +32,15 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     subscription = _repository.getCurrencies().listen((currencyList) async {
       _currencies = currencyList;
       if (_currencies.isNotEmpty) {
+
+        // If there is no selected currency we set EUR as default
         _selected = await _repository.getSelectedCurrency();
         if (_selected == null) {
           await _repository.setSelectedCurrency('EUR');
           _selected = await _repository.getSelectedCurrency();
         }
+
+
 
         emit(CurrencyReadyState(_currencies, _selected!));
       }
