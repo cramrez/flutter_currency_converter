@@ -16,7 +16,7 @@ class FavoritesCubit extends Cubit<FavoriteState> {
 
   String filter = '';
 
-  FavoritesCubit(this._currencyCubit) : super(FavoriteInitialState()) {
+  FavoritesCubit(this._currencyCubit) : super(FavoriteLoadingState()) {
     _init();
   }
 
@@ -57,8 +57,6 @@ class FavoriteState extends Equatable {
   @override
   List<Object?> get props => [];
 }
-
-class FavoriteInitialState extends FavoriteState {}
 
 class FavoriteLoadingState extends FavoriteState {}
 
