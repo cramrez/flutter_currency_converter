@@ -32,15 +32,12 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     subscription = _repository.getCurrencies().listen((currencyList) async {
       _currencies = currencyList;
       if (_currencies.isNotEmpty) {
-
         // If there is no selected currency we set EUR as default
         _selected = await _repository.getSelectedCurrency();
         if (_selected == null) {
           await _repository.setSelectedCurrency('EUR');
           _selected = await _repository.getSelectedCurrency();
         }
-
-
 
         emit(CurrencyReadyState(_currencies, _selected!));
       }
@@ -62,6 +59,12 @@ class CurrencyCubit extends Cubit<CurrencyState> {
       _currencies = List.from(_currencies)..replaceWhere((it) => it.key == key, edited);
       emit(CurrencyReadyState(_currencies, _selected!));
     }
+  }
+
+  Future<void> setSelected(String key) async {
+    await _repository.setSelectedCurrency(key);
+    _selected = await _repository.getSelectedCurrency();
+    emit(CurrencyReadyState(_currencies, _selected!));
   }
 
   void setWarning(String message) async {

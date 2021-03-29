@@ -3,15 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_currency_converter/src/bloc/converter_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
+import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
 import 'package:flutter_currency_converter/src/ui/calculator.dart';
 import 'package:flutter_currency_converter/src/utils/currency_symbols.dart';
-import 'package:flutter_simple_calculator/flutter_simple_calculator.dart';
 import 'package:provider/provider.dart';
 
 class ConverterScreen extends StatelessWidget {
   static Widget create(BuildContext context) {
     return BlocProvider(
-      create: (_) => ConverterCubit(context.read<CurrencyCubit>()),
+      create: (_) => ConverterCubit(context.read<CurrencyCubit>(), context.read<CurrencyRepositoryBase>()),
       child: ConverterScreen(),
     );
   }
@@ -33,8 +33,7 @@ class ConverterScreen extends StatelessWidget {
                   },
                   child: ReorderableListView(
                     onReorder: (int oldIndex, int newIndex) async {
-                      // TODO Reaoder
-                      // await context.read<CurrencyCubit>().reOrder(oldIndex, newIndex);
+                      await context.read<ConverterCubit>().reOrder(oldIndex, newIndex);
                     },
                     children: state.currencies.map((it) => _CurrencyRow(it)).toList(),
                   ),
@@ -139,7 +138,7 @@ class _SelectedRow extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    '${getCurrencySymbol(_selected.key)}$_amountConverting',
+                                    '${getCurrencySymbol(_selected.key)} $_amountConverting',
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 22.0,
@@ -182,7 +181,7 @@ class _CurrencyRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                '${getCurrencySymbol(currency.key)}${currency.resultSelectedTo}',
+                '${getCurrencySymbol(currency.key)} ${currency.resultSelectedTo}',
                 style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
@@ -200,7 +199,5 @@ class _CurrencyRow extends StatelessWidget {
     );
   }
 
-  Future<void> onTap(BuildContext context) async {
-    //TODO: Tap set this currency as selected
-  }
+  Future<void> onTap(BuildContext context) => context.read<CurrencyCubit>().setSelected(currency.key);
 }

@@ -1,7 +1,6 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_currency_converter/src/bloc/converter_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
-import 'package:flutter_currency_converter/src/bloc/favorites_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../mocks/mock_currency_repository.dart';
@@ -17,7 +16,7 @@ void main() {
 
   blocTest<ConverterCubit, ConverterState>(
     'Converter cubit initialize correctly',
-    build: () => ConverterCubit(currencyCubit),
+    build: () => ConverterCubit(currencyCubit, currencyRepository),
     verify: (cubit) {
       expect(cubit.state is ConverterReadyState, true);
 
@@ -34,7 +33,7 @@ void main() {
 
   blocTest<ConverterCubit, ConverterState>(
     'One EUR to other currency is converter correctly',
-    build: () => ConverterCubit(currencyCubit),
+    build: () => ConverterCubit(currencyCubit, currencyRepository),
     verify: (cubit) {
       final state = cubit.state as ConverterReadyState;
 
@@ -47,7 +46,7 @@ void main() {
 
   blocTest<ConverterCubit, ConverterState>(
     'One of currency is converter to EUR correctly',
-    build: () => ConverterCubit(currencyCubit),
+    build: () => ConverterCubit(currencyCubit, currencyRepository),
     verify: (cubit) {
       final state = cubit.state as ConverterReadyState;
 
@@ -60,7 +59,7 @@ void main() {
 
   blocTest<ConverterCubit, ConverterState>(
     'Set different amount will convert correctly',
-    build: () => ConverterCubit(currencyCubit),
+    build: () => ConverterCubit(currencyCubit, currencyRepository),
     act: (cubit) async {
       await Future.delayed(Duration(milliseconds: 1));
       cubit.setAmount(3.5);
