@@ -40,27 +40,25 @@ void main() {
       cubit.filterCurrencies('MX');
     },
     verify: (cubit) {
-      expect(cubit.state is FavoriteReadyState, true);
-
       final state = cubit.state as FavoriteReadyState;
       expect(state.currencies.length, 1);
       expect(state.currencies[0].key, 'MXN');
+
     },
   );
 
   blocTest<FavoritesCubit, FavoriteState>(
-    'Filters works correctly by key',
+    'Filters works correctly by name',
     build: () => FavoritesCubit(currencyCubit),
     act: (cubit) async {
       await Future.delayed(Duration(milliseconds: 1));
       cubit.filterCurrencies('Mex');
     },
     verify: (cubit) {
-      expect(cubit.state is FavoriteReadyState, true);
-
       final state = cubit.state as FavoriteReadyState;
       expect(state.currencies.length, 1);
       expect(state.currencies[0].name, 'Mexico');
+
     },
   );
 }

@@ -8,17 +8,24 @@ class MockCurrencyRepository extends CurrencyRepositoryBase {
 
   MockCurrencyRepository() {
     final timestamp = 500;
-    final eur = Currency('EUR', 'Euro', 20, timestamp);
-    final cny = Currency('CNY', 'China', 10, timestamp);
-    final usd = Currency('USD', 'USA', 15, timestamp);
-    final mxn = Currency('JPY', 'Mexico', 5, timestamp);
-    final jpy = Currency('MXN', 'Japan', 8, timestamp);
+    final eur = Currency('EUR', 'Euro', 1, timestamp);
+    final cny = Currency('CNY', 'China', 7.71, timestamp);
+    final usd = Currency('USD', 'USA', 1.17, timestamp);
+    final mxn = Currency('JPY', 'Japan', 129.16, timestamp);
+    final jpy = Currency('MXN', 'Mexico', 24.33, timestamp);
     _currencies = [eur, cny, usd, mxn, jpy];
   }
 
-  Future<void> _setEnabled(String key, bool isEnabled) async {
+  Future<void> _setEnabled(String key, bool isEnabled, {int position = -1}) async {
     final result = _currencies.firstWhere((it) => it.key == key);
-    final currency = Currency(result.key, result.name, result.value, result.timestamp, isEnabled: isEnabled);
+    final currency = Currency(
+      result.key,
+      result.name,
+      result.value,
+      result.timestamp,
+      position: position,
+      isEnabled: isEnabled,
+    );
     _currencies.replaceWhere((it) => it.key == key, currency);
   }
 
@@ -26,7 +33,7 @@ class MockCurrencyRepository extends CurrencyRepositoryBase {
   Future<void> disableCurrency(String key) => _setEnabled(key, false);
 
   @override
-  Future<void> enableCurrency(String key, int position) => _setEnabled(key, true);
+  Future<void> enableCurrency(String key, int position) => _setEnabled(key, true, position: position);
 
   @override
   Stream<List<Currency>> getCurrencies() async* {

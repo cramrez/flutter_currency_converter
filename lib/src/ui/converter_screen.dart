@@ -4,6 +4,7 @@ import 'package:flutter_currency_converter/src/bloc/converter_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
 import 'package:flutter_currency_converter/src/ui/calculator.dart';
+import 'package:flutter_currency_converter/src/utils/currency_symbols.dart';
 import 'package:flutter_simple_calculator/flutter_simple_calculator.dart';
 import 'package:provider/provider.dart';
 
@@ -91,7 +92,7 @@ class _SelectedRow extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Row(
             children: <Widget>[
-              const Icon(Icons.flag),
+              Image.asset('assets/flags/${_selected.key}.png'),
               SizedBox(width: 8),
               Expanded(
                 child: Column(
@@ -138,7 +139,7 @@ class _SelectedRow extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    '$_amountConverting',
+                                    '${getCurrencySymbol(_selected.key)}$_amountConverting',
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 22.0,
@@ -175,13 +176,13 @@ class _CurrencyRow extends StatelessWidget {
           onTap: () async => await onTap(context),
           title: Text(currency.key),
           subtitle: Text(currency.name),
-          leading: const Icon(Icons.flag),
+          leading: Image.asset('assets/flags/${currency.key}.png'),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                currency.resultSelectedTo.toString(),
+                '${getCurrencySymbol(currency.key)}${currency.resultSelectedTo}',
                 style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,

@@ -89,7 +89,7 @@ class SelectedCurrencyRow extends StatelessWidget {
       child: ListTile(
         title: Text('${currency.key} (Selected currency)'),
         subtitle: Text(currency.name),
-        leading: const Icon(Icons.flag),
+        leading:  Image.asset('assets/flags/${currency.key}.png'),
       ),
     );
   }
