@@ -4,7 +4,7 @@ import 'package:flutter_currency_converter/src/repository/currency_repository.da
 
 class MockCurrencyRepository extends CurrencyRepositoryBase {
   late List<Currency> _currencies;
-  Currency? _selected;
+  late Currency _selected;
 
   MockCurrencyRepository() {
     final timestamp = 500;
@@ -13,6 +13,7 @@ class MockCurrencyRepository extends CurrencyRepositoryBase {
     final usd = Currency('USD', 'USA', 1.17, timestamp);
     final mxn = Currency('JPY', 'Japan', 129.16, timestamp);
     final jpy = Currency('MXN', 'Mexico', 24.33, timestamp);
+    _selected = eur;
     _currencies = [eur, cny, usd, mxn, jpy];
   }
 
@@ -47,7 +48,7 @@ class MockCurrencyRepository extends CurrencyRepositoryBase {
   Future<int> getEnabledCurrencyCount() async => _currencies.where((it) => it.isEnabled).length;
 
   @override
-  Future<Currency?> getSelectedCurrency() async => _selected;
+  Future<Currency> getSelectedCurrency() async => _selected;
 
   @override
   Future<void> setSelectedCurrency(String key) async {

@@ -13,7 +13,7 @@ class CurrencyDatabase {
 
   Future<void> _init() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'currency7.db');
+    final path = join(dbPath, 'currency9.db');
     _database = await openDatabase(path, version: 2, onCreate: (Database db, int version) async {
       await db.execute('''
           CREATE TABLE currency
@@ -31,6 +31,13 @@ class CurrencyDatabase {
            position INTEGER
           )
         ''');
+
+      await db.rawInsert('INSERT INTO enabledCurrency (key, position) VALUES ("EUR", 1)');
+      await db.rawInsert('INSERT INTO enabledCurrency (key, position) VALUES ("CNY", 2)');
+      await db.rawInsert('INSERT INTO enabledCurrency (key, position) VALUES ("USD", 3)');
+      await db.rawInsert('INSERT INTO enabledCurrency (key, position) VALUES ("JPY", 4)');
+      await db.rawInsert('INSERT INTO enabledCurrency (key, position) VALUES ("MXN", 5)');
+
       await db.execute('''
            CREATE TABLE selectedCurrency
           (
@@ -38,6 +45,7 @@ class CurrencyDatabase {
             key TEXT
           )
         ''');
+      await db.rawInsert('INSERT INTO selectedCurrency (id, KEY) VALUES (1, "EUR")');
     });
   }
 
@@ -138,9 +146,9 @@ class CurrencyDatabase {
     );
   }
 
-  Future<Currency?> getSelectedCurrency() async {
+  Future<Currency> getSelectedCurrency() async {
     final result = await _database.query('selectedCurrency', columns: null, where: 'id = 1');
-    return result.isEmpty ? null : getCurrency(result.first['key'] as String);
+    return getCurrency(result.first['key'] as String);
   }
 
   Future<int> setSelectedCurrency(String key) {

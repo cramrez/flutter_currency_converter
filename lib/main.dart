@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
 import 'package:flutter_currency_converter/src/database/currency_database.dart';
 import 'package:flutter_currency_converter/src/provider/currency_provider.dart';
 import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
 import 'package:flutter_currency_converter/src/repository/implementation/currency_repository.dart';
-import 'package:flutter_currency_converter/src/ui/converter_screen.dart';
+import 'package:flutter_currency_converter/src/ui/bottom_bar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,15 +13,11 @@ void main() async {
   final localDatabase = await CurrencyDatabase.init();
 
   final currencyRepo = CurrencyRepository(currencyProvider, localDatabase);
-  final currencyCubit = CurrencyCubit(currencyRepo);
 
   runApp(
     RepositoryProvider<CurrencyRepositoryBase>(
       create: (_) => currencyRepo,
-      child: BlocProvider(
-        create: (_) => currencyCubit,
-        child: MyApp(),
-      ),
+      child: MyApp(),
     ),
   );
 }
@@ -45,7 +40,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: ConverterScreen.create(context),
+      home: BottomBarWidget.create(context),
     );
   }
 }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_currency_converter/src/bloc/converter_cubit.dart';
-import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
-import 'package:flutter_currency_converter/src/model/currency.dart';
 import 'package:flutter_simple_calculator/flutter_simple_calculator.dart';
 import 'package:provider/provider.dart';
 

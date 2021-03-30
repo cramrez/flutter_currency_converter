@@ -2,50 +2,81 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
 import 'package:flutter_currency_converter/src/extensions/list_extension.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
 import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
 
 class ConverterCubit extends Cubit<ConverterState> {
-  final CurrencyCubit _currencyCubit;
   final CurrencyRepositoryBase _repository;
 
   late final StreamSubscription subscription;
   late Currency _selected;
 
   List<Currency> _enabledCurrencies = [];
-  List<WrapperCurrency> _wrapperCurrencies = [];
 
   num amountToConvert = 1.0;
 
-  ConverterCubit(this._currencyCubit, this._repository) : super(ConverterLoadingState()) {
+  ConverterCubit(this._repository) : super(ConverterLoadingState()) {
     _init();
   }
 
   Future<void> _init() async {
-    subscription = _currencyCubit.stream.listen((state) async {
-      if (state is CurrencyReadyState) {
-        _selected = state.selected;
+    subscription = _repository.getCurrencies().listen((it) async {
+      if (it.isNotEmpty) {
+        _selected = await _repository.getSelectedCurrency();
 
         // Keep only enabled
-        _enabledCurrencies = state.currencies.where((it) => it.isEnabled).toList();
+        _enabledCurrencies = it.where((item) => item.isEnabled).toList();
 
         // Remove selected one
-        _enabledCurrencies.removeWhere((it) => it.key == _selected.key);
+        _enabledCurrencies.removeWhere((item) => item.key == _selected.key);
 
-        _updateWrapper();
+        // Sort by position
+        _enabledCurrencies.sort((a, b) => a.position - b.position);
+
+        _updateState();
       }
     });
   }
 
-  void _updateWrapper() {
-    _wrapperCurrencies = _enabledCurrencies.map((it) {
+  Future<void> setSelected(String key) async {
+    final newIndex = _enabledCurrencies.indexWhere((it) => it.key == key);
+
+    // Remove the 'new' selected from the list
+    _enabledCurrencies.removeAt(newIndex);
+
+    // I will put the 'old' selected in the position of the current
+    await _repository.enableCurrency(_selected.key, newIndex);
+    _enabledCurrencies.insert(newIndex, _selected);
+
+    await _repository.setSelectedCurrency(key);
+    _selected = await _repository.getSelectedCurrency();
+
+    _updateState();
+  }
+
+  void setAmount(num amount) {
+    this.amountToConvert = amount;
+    _updateState();
+  }
+
+  void reOrder(int oldIndex, int newIndex) {
+    //Why newIndex=-1? https://github.com/flutter/flutter/issues/24786#issuecomment-644212767
+    if (oldIndex < newIndex) newIndex -= 1;
+    _enabledCurrencies.reOrder(oldIndex, newIndex);
+
+    for (var i = 0; i < _enabledCurrencies.length; i++) {
+      _repository.enableCurrency(_enabledCurrencies[i].key, i);
+    }
+    _updateState();
+  }
+
+  void _updateState() {
+    final wrapper = _enabledCurrencies.map((it) {
       final resultSelectedTo = (amountToConvert / _selected.value) * it.value;
       final resultOneToSelected = (1 / it.value) * _selected.value;
 
       return WrapperCurrency(
-        it.position,
         it.key,
         it.name,
         _selected.key,
@@ -53,30 +84,8 @@ class ConverterCubit extends Cubit<ConverterState> {
         resultOneToSelected,
       );
     }).toList();
-    _updateState();
-  }
-
-  void setAmount(num amount) {
-    this.amountToConvert = amount;
-    _updateWrapper();
-  }
-
-  Future<void> reOrder(int oldIndex, int newIndex) async {
-    //Why newIndex=-1? https://github.com/flutter/flutter/issues/24786#issuecomment-644212767
-    if (oldIndex < newIndex) newIndex -= 1;
-    _wrapperCurrencies.reOrder(oldIndex, newIndex);
-
-    final futures = <Future<void>>[];
-    _wrapperCurrencies.forEach((it) {
-      futures.add(_repository.enableCurrency(it.key, it.index));
-    });
-    await Future.wait(futures);
-    _updateState();
-  }
-
-  void _updateState() {
     final date = DateTime.fromMillisecondsSinceEpoch(_selected.timestamp * 1000).toIso8601String();
-    emit(ConverterReadyState(_wrapperCurrencies, amountToConvert, _selected, date));
+    emit(ConverterReadyState(wrapper, amountToConvert, _selected, date));
   }
 
   @override
@@ -111,7 +120,6 @@ class ConverterReadyState extends ConverterState {
 }
 
 class WrapperCurrency extends Equatable {
-  final int index;
   final String key;
   final String name;
   final String selectedKey;
@@ -119,7 +127,6 @@ class WrapperCurrency extends Equatable {
   final num resultOneToSelected;
 
   WrapperCurrency(
-    this.index,
     this.key,
     this.name,
     this.selectedKey,
@@ -129,7 +136,6 @@ class WrapperCurrency extends Equatable {
 
   @override
   List<Object> get props => [
-        index,
         key,
         selectedKey,
         resultSelectedTo,

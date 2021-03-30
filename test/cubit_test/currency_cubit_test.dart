@@ -6,14 +6,17 @@ import '../mocks/mock_currency_repository.dart';
 
 void main() {
   late MockCurrencyRepository currencyRepository;
+  late CurrencyCubit currencyCubit;
+
 
   setUp(() {
     currencyRepository = MockCurrencyRepository();
+    currencyCubit = CurrencyCubit(currencyRepository);
   });
 
   blocTest<CurrencyCubit, CurrencyState>(
     'Currency cubit initialize correctly',
-    build: () => CurrencyCubit(currencyRepository),
+    build: () => currencyCubit,
     verify: (CurrencyCubit cubit) {
       expect(cubit.state is CurrencyReadyState, true);
 
@@ -31,7 +34,7 @@ void main() {
 
   blocTest<CurrencyCubit, CurrencyState>(
     'Currency cubit enable correctly',
-    build: () => CurrencyCubit(currencyRepository),
+    build: () => currencyCubit,
     expect: () => [isA<CurrencyReadyState>()],
     verify: (CurrencyCubit cubit) {
       final state = cubit.state as CurrencyReadyState;
@@ -41,7 +44,7 @@ void main() {
 
   blocTest<CurrencyCubit, CurrencyState>(
     'Currency cubit disable correctly',
-    build: () => CurrencyCubit(currencyRepository),
+    build: () => currencyCubit,
     act: (cubit) async {
       await Future.delayed(Duration(milliseconds: 1));
       cubit.setEnabled('USD', false);
@@ -55,7 +58,7 @@ void main() {
 
   blocTest<CurrencyCubit, CurrencyState>(
     'Cannot disable selected currency',
-    build: () => CurrencyCubit(currencyRepository),
+    build: () => currencyCubit,
     act: (cubit) async {
       await Future.delayed(Duration(milliseconds: 1));
       cubit.setEnabled('EUR', false);
@@ -70,7 +73,7 @@ void main() {
 
   blocTest<CurrencyCubit, CurrencyState>(
     'Cannot have less than 2 currencies enabled',
-    build: () => CurrencyCubit(currencyRepository),
+    build: () => currencyCubit,
     act: (cubit) async {
       await Future.delayed(Duration(milliseconds: 1));
       cubit.setEnabled('CNY', false);

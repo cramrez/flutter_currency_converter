@@ -13,5 +13,5 @@ abstract class CurrencyRepositoryBase {
 
   Future<void> setSelectedCurrency(String key);
 
-  Future<Currency?> getSelectedCurrency();
+  Future<Currency> getSelectedCurrency();
 }

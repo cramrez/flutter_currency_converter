@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_currency_converter/src/bloc/bottom_bar_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/converter_cubit.dart';
-import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
 import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
+import 'package:flutter_currency_converter/src/ui/bottom_bar.dart';
 import 'package:flutter_currency_converter/src/ui/calculator.dart';
 import 'package:flutter_currency_converter/src/utils/currency_symbols.dart';
 import 'package:provider/provider.dart';
@@ -11,7 +12,7 @@ import 'package:provider/provider.dart';
 class ConverterScreen extends StatelessWidget {
   static Widget create(BuildContext context) {
     return BlocProvider(
-      create: (_) => ConverterCubit(context.read<CurrencyCubit>(), context.read<CurrencyRepositoryBase>()),
+      create: (_) => ConverterCubit(context.read<CurrencyRepositoryBase>()),
       child: ConverterScreen(),
     );
   }
@@ -20,6 +21,7 @@ class ConverterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _AppBar(),
+      bottomNavigationBar: BottomNavBar(currentItem: context.watch<BottomBarCubit>().state),
       body: BlocBuilder<ConverterCubit, ConverterState>(builder: (context, state) {
         if (state is ConverterReadyState) {
           return Column(
@@ -32,8 +34,8 @@ class ConverterScreen extends StatelessWidget {
                     // TODO Refresh currencis
                   },
                   child: ReorderableListView(
-                    onReorder: (int oldIndex, int newIndex) async {
-                      await context.read<ConverterCubit>().reOrder(oldIndex, newIndex);
+                    onReorder: (int oldIndex, int newIndex) {
+                      context.read<ConverterCubit>().reOrder(oldIndex, newIndex);
                     },
                     children: state.currencies.map((it) => _CurrencyRow(it)).toList(),
                   ),
@@ -199,5 +201,5 @@ class _CurrencyRow extends StatelessWidget {
     );
   }
 
-  Future<void> onTap(BuildContext context) => context.read<CurrencyCubit>().setSelected(currency.key);
+  Future<void> onTap(BuildContext context) => context.read<ConverterCubit>().setSelected(currency.key);
 }

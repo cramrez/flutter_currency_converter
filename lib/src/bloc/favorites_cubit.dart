@@ -2,29 +2,31 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
+import 'package:flutter_currency_converter/src/extensions/list_extension.dart';
 import 'package:flutter_currency_converter/src/extensions/string_extension.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
+import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
 
 class FavoritesCubit extends Cubit<FavoriteState> {
-  final CurrencyCubit _currencyCubit;
+  final CurrencyRepositoryBase _repository;
 
   late final StreamSubscription subscription;
+
   late Currency _selected;
 
   List<Currency> _currencies = [];
 
   String filter = '';
 
-  FavoritesCubit(this._currencyCubit) : super(FavoriteLoadingState()) {
+  FavoritesCubit(this._repository) : super(FavoriteLoadingState()) {
     _init();
   }
 
   Future<void> _init() async {
-    subscription = _currencyCubit.stream.listen((state) async {
-      if (state is CurrencyReadyState) {
-        _currencies = state.currencies;
-        _selected = state.selected;
+    subscription = _repository.getCurrencies().listen((it) async {
+      if (it.isNotEmpty) {
+        _currencies = it;
+        _selected = await _repository.getSelectedCurrency();
         _updateState();
       }
     });
@@ -45,6 +47,31 @@ class FavoritesCubit extends Cubit<FavoriteState> {
       emit(FavoriteReadyState(_currencies, _selected));
     }
   }
+
+  Future<void> setEnabled(String key, bool isEnabled) async {
+    if (_selected.key == key) {
+      setWarning('Cannot disable selected currency');
+    } else if (!isEnabled && _totalEnabledCurrencies <= 2) {
+      setWarning('Cannot disable all currencies');
+    } else {
+      if (isEnabled) {
+        await _repository.enableCurrency(key, 9999);
+      } else {
+        await _repository.disableCurrency(key);
+      }
+      final edited = await _repository.getCurrency(key);
+      _currencies = List.from(_currencies)..replaceWhere((it) => it.key == key, edited);
+      _updateState();
+    }
+  }
+
+  void setWarning(String message) async {
+    emit(FavoriteWarningState(message));
+    await Future.delayed(Duration(milliseconds: 100));
+    emit(FavoriteReadyState(_currencies, _selected));
+  }
+
+  int get _totalEnabledCurrencies => _currencies.where((it) => it.isEnabled).length;
 
   @override
   Future<void> close() {
@@ -68,4 +95,13 @@ class FavoriteReadyState extends FavoriteState {
 
   @override
   List<Object> get props => [currencies];
+}
+
+class FavoriteWarningState extends FavoriteState {
+  final String message;
+
+  FavoriteWarningState(this.message);
+
+  @override
+  List<Object> get props => [message];
 }

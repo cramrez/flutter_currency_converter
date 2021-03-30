@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
+import 'package:flutter_currency_converter/src/bloc/bottom_bar_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/favorites_cubit.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
+import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
+import 'package:flutter_currency_converter/src/ui/bottom_bar.dart';
 import 'package:provider/provider.dart';
 
 class FavoritesScreen extends StatelessWidget {
   static Widget create(BuildContext context) {
     return BlocProvider(
-      create: (_) => FavoritesCubit(context.read<CurrencyCubit>()),
+      create: (_) => FavoritesCubit(context.read<CurrencyRepositoryBase>()),
       child: FavoritesScreen(),
     );
   }
@@ -17,9 +19,10 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Favorites currencies")),
-      body: BlocListener<CurrencyCubit, CurrencyState>(
+      bottomNavigationBar: BottomNavBar(currentItem: context.watch<BottomBarCubit>().state),
+      body: BlocListener<FavoritesCubit, FavoriteState>(
         listener: (context, state) {
-          if (state is CurrencyWarningState) {
+          if (state is FavoriteWarningState) {
             final snackBar = SnackBar(content: Text(state.message));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           }
@@ -59,7 +62,7 @@ class CurrencyRow extends StatelessWidget {
   const CurrencyRow(this.currency);
 
   Future<void> setEnabled(BuildContext context, Currency currency) =>
-      context.read<CurrencyCubit>().setEnabled(currency.key, !currency.isEnabled);
+      context.read<FavoritesCubit>().setEnabled(currency.key, !currency.isEnabled);
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +71,7 @@ class CurrencyRow extends StatelessWidget {
         onTap: () async => setEnabled(context, currency),
         title: Text(currency.key),
         subtitle: Text(currency.name),
-        leading: const Icon(Icons.flag),
+        leading: Image.asset('assets/flags/${currency.key}.png'),
         trailing: Checkbox(
           value: currency.isEnabled,
           onChanged: (bool? value) async => setEnabled(context, currency),
@@ -89,7 +92,7 @@ class SelectedCurrencyRow extends StatelessWidget {
       child: ListTile(
         title: Text('${currency.key} (Selected currency)'),
         subtitle: Text(currency.name),
-        leading:  Image.asset('assets/flags/${currency.key}.png'),
+        leading: Image.asset('assets/flags/${currency.key}.png'),
       ),
     );
   }

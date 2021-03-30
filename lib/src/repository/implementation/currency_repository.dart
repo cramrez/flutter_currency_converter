@@ -45,7 +45,7 @@ class CurrencyRepository extends CurrencyRepositoryBase {
   Future<Currency> getCurrency(String key) => _database.getCurrency(key);
 
   @override
-  Future<Currency?> getSelectedCurrency() => _database.getSelectedCurrency();
+  Future<Currency> getSelectedCurrency() => _database.getSelectedCurrency();
 
   @override
   Future<void> setSelectedCurrency(String key)=>_database.setSelectedCurrency(key);
