@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_currency_converter/src/bloc/bottom_bar_cubit.dart';
+import 'package:flutter_currency_converter/src/bloc/navigation_cubit.dart';
 import 'package:flutter_currency_converter/src/ui/converter_screen.dart';
 import 'package:flutter_currency_converter/src/ui/favorites_screen.dart';
+import 'package:flutter_currency_converter/src/ui/settings_screen.dart';
 
 class BottomNavItem extends Equatable {
   static final converter = BottomNavItem._(0, 'Converter', Icons.money);
@@ -25,7 +26,7 @@ class BottomNavItem extends Equatable {
 class BottomBarWidget extends StatelessWidget {
   static Widget create(BuildContext context) {
     return BlocProvider(
-      create: (_) => BottomBarCubit(),
+      create: (_) => NavigationCubit(),
       child: BottomBarWidget(),
     );
   }
@@ -34,20 +35,20 @@ class BottomBarWidget extends StatelessWidget {
     return {
       BottomNavItem.converter: (context) => ConverterScreen.create(context),
       BottomNavItem.currencies: (context) => FavoritesScreen.create(context),
-      BottomNavItem.settings: (context) => ConverterScreen.create(context),
+      BottomNavItem.settings: (context) => SettingsScreen.create(context),
     };
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<BottomBarCubit, BottomNavItem>(
+    return BlocBuilder<NavigationCubit, BottomNavItem>(
       builder: (context, state) => widgetBuilders[state]!(context),
     );
   }
 }
 
 class BottomNavBar extends StatelessWidget {
-  const BottomNavBar({Key? key, required this.currentItem}) : super(key: key);
+  const BottomNavBar(this.currentItem);
 
   final BottomNavItem currentItem;
 
@@ -74,6 +75,6 @@ class BottomNavBar extends StatelessWidget {
 
   void onItemTapped(BuildContext context, int index) {
     final item = BottomNavItem.values.firstWhere((it) => it.index == index);
-    context.read<BottomBarCubit>().onChanged(item);
+    context.read<NavigationCubit>().onChanged(item);
   }
 }

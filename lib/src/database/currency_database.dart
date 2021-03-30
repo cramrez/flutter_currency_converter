@@ -3,15 +3,9 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class CurrencyDatabase {
-  static Future<CurrencyDatabase> init() async {
-    final aux = CurrencyDatabase();
-    await aux._init();
-    return aux;
-  }
-
   late Database _database;
 
-  Future<void> _init() async {
+  Future<CurrencyDatabase> init() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'currency9.db');
     _database = await openDatabase(path, version: 2, onCreate: (Database db, int version) async {
@@ -47,6 +41,7 @@ class CurrencyDatabase {
         ''');
       await db.rawInsert('INSERT INTO selectedCurrency (id, KEY) VALUES (1, "EUR")');
     });
+    return this;
   }
 
   Future<int> insert(Currency item) {

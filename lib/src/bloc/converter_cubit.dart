@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_currency_converter/src/extensions/datetime_extension.dart';
 import 'package:flutter_currency_converter/src/extensions/list_extension.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
 import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
@@ -9,18 +10,19 @@ import 'package:flutter_currency_converter/src/repository/currency_repository.da
 class ConverterCubit extends Cubit<ConverterState> {
   final CurrencyRepositoryBase _repository;
 
-  late final StreamSubscription subscription;
-  late Currency _selected;
+  StreamSubscription? subscription;
 
+  late Currency _selected;
   List<Currency> _enabledCurrencies = [];
 
   num amountToConvert = 1.0;
 
   ConverterCubit(this._repository) : super(ConverterLoadingState()) {
-    _init();
+    refresh();
   }
 
-  Future<void> _init() async {
+  Future<void> refresh() async {
+    subscription?.cancel();
     subscription = _repository.getCurrencies().listen((it) async {
       if (it.isNotEmpty) {
         _selected = await _repository.getSelectedCurrency();
@@ -90,13 +92,13 @@ class ConverterCubit extends Cubit<ConverterState> {
         resultOneToSelected,
       );
     }).toList();
-    final date = DateTime.fromMillisecondsSinceEpoch(_selected.timestamp * 1000).toIso8601String();
+    final date = DateTime.fromMillisecondsSinceEpoch(_selected.timestamp * 1000).prettyDate();
     emit(ConverterReadyState(wrapper, amountToConvert, _selected, date));
   }
 
   @override
   Future<void> close() {
-    subscription.cancel();
+    subscription?.cancel();
     return super.close();
   }
 }

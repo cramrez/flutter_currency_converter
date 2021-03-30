@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_currency_converter/src/bloc/bottom_bar_cubit.dart';
+import 'package:flutter_currency_converter/src/bloc/navigation_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/favorites_cubit.dart';
 import 'package:flutter_currency_converter/src/model/currency.dart';
 import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
@@ -19,7 +19,7 @@ class FavoritesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Favorites currencies")),
-      bottomNavigationBar: BottomNavBar(currentItem: context.watch<BottomBarCubit>().state),
+      bottomNavigationBar: BottomNavBar(context.watch<NavigationCubit>().state),
       body: BlocListener<FavoritesCubit, FavoriteState>(
         listener: (context, state) {
           if (state is FavoriteWarningState) {

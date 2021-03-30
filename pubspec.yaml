@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # https://pub.dev/packages/intl
+  intl: ^0.17.0
   # https://pub.dev/packages/http
   http: ^0.13.0
   # https://pub.dev/packages/sqflite
@@ -23,6 +25,8 @@ dependencies:
   tuple: ^2.0.0
   # https://pub.dev/packages/flutter_simple_calculator
   flutter_simple_calculator: ^2.0.0-nullsafety.1
+  # https://pub.dev/packages/shared_preferences
+  shared_preferences: ^2.0.5
 
 dev_dependencies:
   flutter_test:
