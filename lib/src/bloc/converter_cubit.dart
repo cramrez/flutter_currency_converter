@@ -39,7 +39,12 @@ class ConverterCubit extends Cubit<ConverterState> {
     });
   }
 
+  bool lockSelecting = false;
+
   Future<void> setSelected(String key) async {
+    if (lockSelecting) return;
+    lockSelecting = true;
+
     final newIndex = _enabledCurrencies.indexWhere((it) => it.key == key);
 
     // Remove the 'new' selected from the list
@@ -53,6 +58,7 @@ class ConverterCubit extends Cubit<ConverterState> {
     _selected = await _repository.getSelectedCurrency();
 
     _updateState();
+    lockSelecting = false;
   }
 
   void setAmount(num amount) {
@@ -61,7 +67,7 @@ class ConverterCubit extends Cubit<ConverterState> {
   }
 
   void reOrder(int oldIndex, int newIndex) {
-    //Why newIndex=-1? https://github.com/flutter/flutter/issues/24786#issuecomment-644212767
+    //Why newIndex =-1 ? https://github.com/flutter/flutter/issues/24786#issuecomment-644212767
     if (oldIndex < newIndex) newIndex -= 1;
     _enabledCurrencies.reOrder(oldIndex, newIndex);
 
