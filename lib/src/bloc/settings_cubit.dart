@@ -8,10 +8,10 @@ class SettingsCubit extends Cubit<SettingsState> {
   late NumberFormat formatter;
   late SharedPreferences prefs;
 
-  int numberOfDecimals = 3;
-  String decimalSeparator = '.';
-  bool isSymbolAtStart = true;
-  bool isGroupSeparatorEnabled = true;
+  late int numberOfDecimals;
+  late String decimalSeparator;
+  late bool isSymbolAtStart;
+  late bool isGroupSeparatorEnabled;
 
   SettingsCubit() : super(SettingsState());
 
@@ -20,36 +20,36 @@ class SettingsCubit extends Cubit<SettingsState> {
     numberOfDecimals = prefs.getInt('numberOfDecimals') ?? 3;
     decimalSeparator = prefs.getString('decimalSeparator') ?? '.';
     isSymbolAtStart = prefs.getBool('isSymbolAtStart') ?? true;
-    isGroupSeparatorEnabled = prefs.getBool('isGroupingSeparatorEnabled') ?? true;
-    formatUpdated();
+    isGroupSeparatorEnabled = prefs.getBool('isGroupSeparatorEnabled') ?? true;
+    _formatUpdated();
     return this;
   }
 
   void setNumberOfDecimals(int numberOfDecimals) async {
     this.numberOfDecimals = numberOfDecimals;
     await prefs.setInt('numberOfDecimals', numberOfDecimals);
-    formatUpdated();
+    _formatUpdated();
   }
 
   void setGroupingSeparator(bool enabled) async {
     this.isGroupSeparatorEnabled = enabled;
-    await prefs.setBool('isGroupingSeparatorEnabled', isGroupSeparatorEnabled);
-    formatUpdated();
+    await prefs.setBool('isGroupSeparatorEnabled', isGroupSeparatorEnabled);
+    _formatUpdated();
   }
 
   void setSymbolPosition(bool atStart) async {
     this.isSymbolAtStart = atStart;
     await prefs.setBool('isSymbolAtStart', isSymbolAtStart);
-    formatUpdated();
+    _formatUpdated();
   }
 
   void setDecimalSeparator(bool isPoint) async {
     decimalSeparator = isPoint ? '.' : ',';
     await prefs.setString('decimalSeparator', decimalSeparator);
-    formatUpdated();
+    _formatUpdated();
   }
 
-  void formatUpdated() {
+  void _formatUpdated() {
     numberFormatSymbols['custom'] = _getSymbols();
 
     var auxDecimals = '';

@@ -8,10 +8,10 @@ import 'package:flutter_currency_converter/src/ui/settings_screen.dart';
 
 class BottomNavItem extends Equatable {
   static final converter = BottomNavItem._(0, 'Converter', Icons.money);
-  static final currencies = BottomNavItem._(1, 'Favorites', Icons.monetization_on_outlined);
+  static final favorites = BottomNavItem._(1, 'Favorites', Icons.favorite);
   static final settings = BottomNavItem._(2, 'Settings', Icons.settings);
 
-  static List<BottomNavItem> get values => [converter, currencies, settings];
+  static List<BottomNavItem> get values => [converter, favorites, settings];
 
   final int index;
   final String title;
@@ -34,7 +34,7 @@ class BottomBarWidget extends StatelessWidget {
   Map<BottomNavItem, WidgetBuilder> get widgetBuilders {
     return {
       BottomNavItem.converter: (context) => ConverterScreen.create(context),
-      BottomNavItem.currencies: (context) => FavoritesScreen.create(context),
+      BottomNavItem.favorites: (context) => FavoritesScreen.create(context),
       BottomNavItem.settings: (context) => SettingsScreen.create(context),
     };
   }
@@ -60,7 +60,7 @@ class BottomNavBar extends StatelessWidget {
       onTap: (index) => onItemTapped(context, index),
       items: [
         getNavigationBarItem(BottomNavItem.converter),
-        getNavigationBarItem(BottomNavItem.currencies),
+        getNavigationBarItem(BottomNavItem.favorites),
         getNavigationBarItem(BottomNavItem.settings)
       ],
     );

@@ -73,6 +73,7 @@ class CurrencyRow extends StatelessWidget {
         subtitle: Text(currency.name),
         leading: Image.asset('assets/flags/${currency.key}.png'),
         trailing: Checkbox(
+          key: Key(currency.key),
           value: currency.isEnabled,
           onChanged: (bool? value) async => setEnabled(context, currency),
         ),
