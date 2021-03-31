@@ -18,7 +18,7 @@ class SettingsCubit extends Cubit<SettingsState> {
   Future<SettingsCubit> init() async {
     prefs = await SharedPreferences.getInstance();
     numberOfDecimals = prefs.getInt('numberOfDecimals') ?? 3;
-    decimalSeparator = prefs.getString('numberOfDecimals') ?? '.';
+    decimalSeparator = prefs.getString('decimalSeparator') ?? '.';
     isSymbolAtStart = prefs.getBool('isSymbolAtStart') ?? true;
     isGroupSeparatorEnabled = prefs.getBool('isGroupingSeparatorEnabled') ?? true;
     formatUpdated();

@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter_currency_converter/src/bloc/currency_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/favorites_cubit.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -7,16 +6,14 @@ import '../mocks/mock_currency_repository.dart';
 
 void main() {
   late MockCurrencyRepository currencyRepository;
-  late CurrencyCubit currencyCubit;
 
   setUp(() {
     currencyRepository = MockCurrencyRepository();
-    currencyCubit = CurrencyCubit(currencyRepository);
   });
 
   blocTest<FavoritesCubit, FavoriteState>(
     'Favorite cubit initialize correctly',
-    build: () => FavoritesCubit(currencyCubit),
+    build: () => FavoritesCubit(currencyRepository),
     verify: (cubit) {
       expect(cubit.state is FavoriteReadyState, true);
 
@@ -34,7 +31,7 @@ void main() {
 
   blocTest<FavoritesCubit, FavoriteState>(
     'Filters works correctly by key',
-    build: () => FavoritesCubit(currencyCubit),
+    build: () => FavoritesCubit(currencyRepository),
     act: (cubit) async {
       await Future.delayed(Duration(milliseconds: 1));
       cubit.filterCurrencies('MX');
@@ -43,22 +40,24 @@ void main() {
       final state = cubit.state as FavoriteReadyState;
       expect(state.currencies.length, 1);
       expect(state.currencies[0].key, 'MXN');
-
     },
   );
 
   blocTest<FavoritesCubit, FavoriteState>(
     'Filters works correctly by name',
-    build: () => FavoritesCubit(currencyCubit),
+    build: () => FavoritesCubit(currencyRepository),
     act: (cubit) async {
       await Future.delayed(Duration(milliseconds: 1));
       cubit.filterCurrencies('Mex');
     },
+    expect: () => [
+      isA<FavoriteReadyState>(),
+      isA<FavoriteReadyState>(),
+    ],
     verify: (cubit) {
       final state = cubit.state as FavoriteReadyState;
       expect(state.currencies.length, 1);
       expect(state.currencies[0].name, 'Mexico');
-
     },
   );
 }

@@ -8,11 +8,11 @@ class MockCurrencyRepository extends CurrencyRepositoryBase {
 
   MockCurrencyRepository() {
     final timestamp = 500;
-    final eur = Currency('EUR', 'Euro', 1, timestamp);
-    final cny = Currency('CNY', 'China', 7.71, timestamp);
-    final usd = Currency('USD', 'USA', 1.17, timestamp);
-    final mxn = Currency('JPY', 'Japan', 129.16, timestamp);
-    final jpy = Currency('MXN', 'Mexico', 24.33, timestamp);
+    final eur = Currency('EUR', 'Euro', 1, timestamp, isEnabled: true, position: 0);
+    final cny = Currency('CNY', 'China', 7.71, timestamp, isEnabled: true, position: 0);
+    final usd = Currency('USD', 'USA', 1.17, timestamp, isEnabled: true, position: 0);
+    final mxn = Currency('JPY', 'Japan', 129.16, timestamp, isEnabled: true, position: 0);
+    final jpy = Currency('MXN', 'Mexico', 24.33, timestamp, isEnabled: true, position: 0);
     _selected = eur;
     _currencies = [eur, cny, usd, mxn, jpy];
   }
