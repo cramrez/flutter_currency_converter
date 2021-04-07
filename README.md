@@ -11,7 +11,8 @@ Flutter Version: Stable 2.0.4
 
 # Architecture
 
-![Image 1](https://github.com/Yayo-Arellano/flutter_currency_converter/blob/master/images/Architecture.png?raw=true)
+
+![Image 1](https://github.com/Yayo-Arellano/flutter_currency_converter/blob/master/screenshots/Architecture.png?raw=true)
 
 # Prerequisites
 
@@ -29,5 +30,5 @@ Flutter Version: Stable 2.0.4
 
 | Converter Screen | Favorites Screen | Settings Screen |
 | ---------------- | --------------------- | --------------------- |
-| ![Image 1](https://github.com/Yayo-Arellano/flutter_currency_converter/blob/master/images/Image%201.png?raw=true) |![Image 2](https://github.com/Yayo-Arellano/flutter_currency_converter/blob/master/images/Image%202.png?raw=true) |![Image 3](https://github.com/Yayo-Arellano/flutter_currency_converter/blob/master/images/Image%203.png?raw=true) |
+| ![Image 1](https://github.com/Yayo-Arellano/flutter_currency_converter/blob/master/screenshots/Image%201.png?raw=true) |![Image 2](https://github.com/Yayo-Arellano/flutter_currency_converter/blob/master/screenshots/Image%202.png?raw=true) |![Image 3](https://github.com/Yayo-Arellano/flutter_currency_converter/blob/master/screenshots/Image%203.png?raw=true) |
 
