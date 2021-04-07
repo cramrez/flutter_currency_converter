@@ -2,10 +2,10 @@ import 'package:flutter_currency_converter/src/model/currency.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
-class CurrencyDatabase {
+class DbProvider {
   late Database _database;
 
-  Future<CurrencyDatabase> init() async {
+  Future<DbProvider> init() async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, 'currency9.db');
     _database = await openDatabase(path, version: 2, onCreate: (Database db, int version) async {

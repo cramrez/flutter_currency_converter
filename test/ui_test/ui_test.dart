@@ -1,8 +1,6 @@
-import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_currency_converter/src/bloc/converter_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/navigation_cubit.dart';
 import 'package:flutter_currency_converter/src/bloc/settings_cubit.dart';
 import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
@@ -28,8 +26,11 @@ void main() {
   Widget getApp({required Widget child}) {
     return RepositoryProvider<CurrencyRepositoryBase>(
       create: (context) => currencyRepository,
-      child: BlocProvider(
-        create: (_) => settingsCubit,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => settingsCubit),
+          BlocProvider(create: (_) => NavigationCubit()),
+        ],
         child: MaterialApp(
           home: child,
         ),
@@ -37,7 +38,8 @@ void main() {
     );
   }
 
-  testWidgets('Test bottom widget navigate correctly', (WidgetTester tester) async {
+  testWidgets('Test bottom widget navigate correctly',
+      (WidgetTester tester) async {
     await tester.pumpWidget(getApp(
       child: Builder(
         builder: (context) => BottomBarWidget.create(context),
@@ -65,14 +67,12 @@ void main() {
     expect(find.byType(SettingsScreen), findsOneWidget);
   });
 
-  testWidgets('Test converter screen show defaults correctly', (WidgetTester tester) async {
+  testWidgets('Test converter screen show defaults correctly',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       getApp(
         child: Builder(
-          builder: (context) => BlocProvider(
-            create: (_) => NavigationCubit(),
-            child: ConverterScreen.create(context),
-          ),
+          builder: (context) => ConverterScreen.create(context),
         ),
       ),
     );
@@ -86,7 +86,8 @@ void main() {
     expect(find.text('MXN'), findsOneWidget);
   });
 
-  testWidgets('Disabled currencies will not show in the convertor screen', (WidgetTester tester) async {
+  testWidgets('Disabled currencies will not show in the convertor screen',
+      (WidgetTester tester) async {
     // I disable the currencies first
     await currencyRepository.disableCurrency('CNY');
     await currencyRepository.disableCurrency('USD');
@@ -94,10 +95,7 @@ void main() {
     await tester.pumpWidget(
       getApp(
         child: Builder(
-          builder: (context) => BlocProvider(
-            create: (_) => NavigationCubit(),
-            child: ConverterScreen.create(context),
-          ),
+          builder: (context) => ConverterScreen.create(context),
         ),
       ),
     );
@@ -111,20 +109,19 @@ void main() {
     expect(find.text('MXN'), findsOneWidget);
   });
 
-  testWidgets('Favorites screen will show defaults', (WidgetTester tester) async {
+  testWidgets('Favorites screen will show defaults',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       getApp(
         child: Builder(
-          builder: (context) => BlocProvider(
-            create: (_) => NavigationCubit(),
-            child: FavoritesScreen.create(context),
-          ),
+          builder: (context) => FavoritesScreen.create(context),
         ),
       ),
     );
     await tester.pumpAndSettle();
 
-    Checkbox getCheckBox(String key) => tester.firstWidget(find.byKey(Key(key)));
+    Checkbox getCheckBox(String key) =>
+        tester.firstWidget(find.byKey(Key(key)));
 
     // Listview has 6 widgets
     expect(find.byType(ListTile), findsNWidgets(6));
@@ -140,14 +137,12 @@ void main() {
     expect(getCheckBox('MXN').value, true);
   });
 
-  testWidgets('Filter random text will only show the selected currency', (WidgetTester tester) async {
+  testWidgets('Filter random text will only show the selected currency',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       getApp(
         child: Builder(
-          builder: (context) => BlocProvider(
-            create: (_) => NavigationCubit(),
-            child: FavoritesScreen.create(context),
-          ),
+          builder: (context) => FavoritesScreen.create(context),
         ),
       ),
     );
@@ -161,27 +156,25 @@ void main() {
     expect(find.text('EUR (Selected currency)'), findsOneWidget);
   });
 
-  testWidgets('Favorite Screen: Tapping a currency will disable it', (WidgetTester tester) async {
+  testWidgets('Favorite Screen: Tapping a currency will disable it',
+      (WidgetTester tester) async {
     await tester.pumpWidget(
       getApp(
         child: Builder(
-          builder: (context) => BlocProvider(
-            create: (_) => NavigationCubit(),
-            child: FavoritesScreen.create(context),
-          ),
+          builder: (context) => FavoritesScreen.create(context),
         ),
       ),
     );
-    await tester.pumpAndSettle(Duration(milliseconds: 1000));
+    await tester.pumpAndSettle();
 
     // Before tapping there are 5 currencies enabled
     expect(await currencyRepository.getEnabledCurrencyCount(), 5);
 
-    // FIXME: For some reason tap does not work
-    await tester.tap(find.byKey(Key('MXN')));
-    await tester.pumpAndSettle();
+    // Tap to disable USD
+    await tester.tap(find.byKey(Key('USD')));
+    await tester.pump();
 
     // After tapping there are 4 currencies enabled
     expect(await currencyRepository.getEnabledCurrencyCount(), 4);
-  }, skip: true);
+  }, skip: false);
 }

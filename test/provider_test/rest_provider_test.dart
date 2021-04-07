@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter_currency_converter/src/provider/currency_provider.dart';
+import 'package:flutter_currency_converter/src/provider/rest_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart';
 import 'package:http/testing.dart';
@@ -36,7 +36,7 @@ void main() {
 
 final headers = {HttpHeaders.contentTypeHeader: 'application/json; charset=utf-8'};
 
-CurrencyProvider _getProvider(String filePath) => CurrencyProvider(httpClient: _getMockProvider(filePath));
+RestProvider _getProvider(String filePath) => RestProvider(httpClient: _getMockProvider(filePath));
 
 MockClient _getMockProvider(String filePath) =>
     MockClient((_) async => Response(await File(filePath).readAsString(), 200, headers: headers));

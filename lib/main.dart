@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_currency_converter/src/bloc/settings_cubit.dart';
-import 'package:flutter_currency_converter/src/database/currency_database.dart';
-import 'package:flutter_currency_converter/src/provider/currency_provider.dart';
+import 'package:flutter_currency_converter/src/provider/db_provider.dart';
+import 'package:flutter_currency_converter/src/provider/rest_provider.dart';
 import 'package:flutter_currency_converter/src/repository/currency_repository.dart';
 import 'package:flutter_currency_converter/src/repository/implementation/currency_repository.dart';
 import 'package:flutter_currency_converter/src/ui/bottom_bar.dart';
@@ -10,10 +10,10 @@ import 'package:flutter_currency_converter/src/ui/bottom_bar.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final currencyProvider = CurrencyProvider();
-  final localDatabase = await CurrencyDatabase().init();
+  final restProvider = RestProvider();
+  final dbProvider = await DbProvider().init();
 
-  final currencyRepo = CurrencyRepository(currencyProvider, localDatabase);
+  final currencyRepo = CurrencyRepository(restProvider, dbProvider);
   final settingsCubit = await SettingsCubit().init();
 
   runApp(

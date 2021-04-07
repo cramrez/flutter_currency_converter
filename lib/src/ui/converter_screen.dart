@@ -23,7 +23,8 @@ class ConverterScreen extends StatelessWidget {
     return Scaffold(
       appBar: _AppBar(),
       bottomNavigationBar: BottomNavBar(context.watch<NavigationCubit>().state),
-      body: BlocBuilder<ConverterCubit, ConverterState>(builder: (context, state) {
+      body: BlocBuilder<ConverterCubit, ConverterState>(
+          builder: (context, state) {
         if (state is ConverterReadyState) {
           return Column(
             children: <Widget>[
@@ -35,9 +36,12 @@ class ConverterScreen extends StatelessWidget {
                   },
                   child: ReorderableListView(
                     onReorder: (int oldIndex, int newIndex) {
-                      context.read<ConverterCubit>().reOrder(oldIndex, newIndex);
+                      context
+                          .read<ConverterCubit>()
+                          .reOrder(oldIndex, newIndex);
                     },
-                    children: state.currencies.map((it) => _CurrencyRow(it)).toList(),
+                    children:
+                        state.currencies.map((it) => _CurrencyRow(it)).toList(),
                   ),
                 ),
               )
@@ -59,22 +63,28 @@ class _AppBar extends StatelessWidget with PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title:
-          Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(
-          'Currency Converter',
-          style: TextStyle(color: Colors.white, fontSize: 16.0),
-        ),
-        const SizedBox(width: 4, height: 4),
-        BlocBuilder<ConverterCubit, ConverterState>(
-          builder: (context, state) {
-            return Text(
-              state is ConverterReadyState ? state.timestamp : 'Updating...',
-              style: const TextStyle(color: Colors.white, fontSize: 14.0, fontWeight: FontWeight.w300),
-            );
-          },
-        )
-      ]),
+      title: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Currency Converter',
+            style: TextStyle(color: Colors.white, fontSize: 16.0),
+          ),
+          const SizedBox(width: 4, height: 4),
+          BlocBuilder<ConverterCubit, ConverterState>(
+            builder: (context, state) {
+              return Text(
+                state is ConverterReadyState ? state.timestamp : 'Updating...',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w300),
+              );
+            },
+          )
+        ],
+      ),
     );
   }
 }
@@ -120,15 +130,14 @@ class _SelectedRow extends StatelessWidget {
                                 builder: (_) {
                                   return SizedBox(
                                     height: MediaQuery.of(context).size.height * 0.75,
-                                    child: BlocProvider(
-                                      create: (_) => context.read<ConverterCubit>(),
-                                      child: SimpleCalculator(
-                                        value: _amountConverting.toDouble(),
-                                        hideExpression: false,
-                                        hideSurroundingBorder: true,
-                                        onChanged: (key, value, expression) =>
-                                            context.read<ConverterCubit>().setAmount(value ?? 0),
-                                      ),
+                                    child: SimpleCalculator(
+                                      value: _amountConverting.toDouble(),
+                                      hideExpression: false,
+                                      hideSurroundingBorder: true,
+                                      onChanged: (key, value, expression) =>
+                                          context
+                                              .read<ConverterCubit>()
+                                              .setAmount(value ?? 0),
                                     ),
                                   );
                                 },
@@ -138,7 +147,8 @@ class _SelectedRow extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8.0),
-                                border: Border.all(color: Colors.black, width: 1),
+                                border:
+                                    Border.all(color: Colors.black, width: 1),
                               ),
                               height: 40,
                               child: Align(
@@ -146,7 +156,8 @@ class _SelectedRow extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    context.formatCurrency(_amountConverting, getCurrencySymbol(_selected.key)),
+                                    context.formatCurrency(_amountConverting,
+                                        getCurrencySymbol(_selected.key)),
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 22.0,
@@ -189,7 +200,8 @@ class _CurrencyRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               Text(
-                context.formatCurrency(currency.resultSelectedTo, getCurrencySymbol(currency.key)),
+                context.formatCurrency(
+                    currency.resultSelectedTo, getCurrencySymbol(currency.key)),
                 style: const TextStyle(
                   fontSize: 16.0,
                   fontWeight: FontWeight.bold,
@@ -207,5 +219,6 @@ class _CurrencyRow extends StatelessWidget {
     );
   }
 
-  Future<void> onTap(BuildContext context) => context.read<ConverterCubit>().setSelected(currency.key);
+  Future<void> onTap(BuildContext context) =>
+      context.read<ConverterCubit>().setSelected(currency.key);
 }

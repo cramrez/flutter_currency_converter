@@ -93,7 +93,7 @@ class NumberOfDecimals extends StatelessWidget {
 class DecimalSeparator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<SettingsCubit>();
+    final settingsCubit = context.watch<SettingsCubit>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,8 +107,8 @@ class DecimalSeparator extends StatelessWidget {
           children: [
             Radio(
               value: true,
-              groupValue: cubit.decimalSeparator == '.',
-              onChanged: (bool? value) => cubit.setDecimalSeparator(value!),
+              groupValue: settingsCubit.decimalSeparator == '.',
+              onChanged: (bool? value) => settingsCubit.setDecimalSeparator(value!),
             ),
             Text('Decimal Point')
           ],
@@ -117,8 +117,8 @@ class DecimalSeparator extends StatelessWidget {
           children: [
             Radio(
               value: false,
-              groupValue: cubit.decimalSeparator == '.',
-              onChanged: (bool? value) => cubit.setDecimalSeparator(value!),
+              groupValue: settingsCubit.decimalSeparator == '.',
+              onChanged: (bool? value) => settingsCubit.setDecimalSeparator(value!),
             ),
             Text('Decimal comma')
           ],
@@ -131,7 +131,7 @@ class DecimalSeparator extends StatelessWidget {
 class CurrencySymbol extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<SettingsCubit>();
+    final settingsCubit = context.watch<SettingsCubit>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,15 +146,15 @@ class CurrencySymbol extends StatelessWidget {
           children: [
             Radio(
               value: true,
-              groupValue: cubit.isSymbolAtStart,
-              onChanged: (bool? value) => cubit.setSymbolPosition(value!),
+              groupValue: settingsCubit.isSymbolAtStart,
+              onChanged: (bool? value) => settingsCubit.setSymbolPosition(value!),
             ),
             Text('Start'),
             const SizedBox(width: 50),
             Radio(
               value: false,
-              groupValue: cubit.isSymbolAtStart,
-              onChanged: (bool? value) => cubit.setSymbolPosition(value!),
+              groupValue: settingsCubit.isSymbolAtStart,
+              onChanged: (bool? value) => settingsCubit.setSymbolPosition(value!),
             ),
             Text('End')
           ],
@@ -167,7 +167,7 @@ class CurrencySymbol extends StatelessWidget {
 class GroupingSeparator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<SettingsCubit>();
+    final settingsCubit = context.watch<SettingsCubit>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,8 +180,8 @@ class GroupingSeparator extends StatelessWidget {
         Row(
           children: [
             Checkbox(
-              value: cubit.isGroupSeparatorEnabled,
-              onChanged: (bool? value) async => cubit.setGroupingSeparator(value!),
+              value: settingsCubit.isGroupSeparatorEnabled,
+              onChanged: (bool? value) async => settingsCubit.setGroupingSeparator(value!),
             ),
             Expanded(child: Text('Enable symbol used for thousands separator'))
           ],

@@ -38,13 +38,14 @@ class FavoritesCubit extends Cubit<FavoriteState> {
   }
 
   void _updateState() {
-    if (filter.isNotEmpty) {
+    if (filter.isEmpty) {
+      emit(FavoriteReadyState(_currencies, _selected));
+    } else {
       final result = _currencies.where((it) {
-        return it.key.containsIgnoreCase(filter) || it.name.containsIgnoreCase(filter);
+        return it.key.containsIgnoreCase(filter) ||
+            it.name.containsIgnoreCase(filter);
       }).toList();
       emit(FavoriteReadyState(result, _selected));
-    } else {
-      emit(FavoriteReadyState(_currencies, _selected));
     }
   }
 
@@ -60,7 +61,8 @@ class FavoritesCubit extends Cubit<FavoriteState> {
         await _repository.disableCurrency(key);
       }
       final edited = await _repository.getCurrency(key);
-      _currencies = List.from(_currencies)..replaceWhere((it) => it.key == key, edited);
+      _currencies = List.from(_currencies)
+        ..replaceWhere((it) => it.key == key, edited);
       _updateState();
     }
   }
@@ -68,10 +70,11 @@ class FavoritesCubit extends Cubit<FavoriteState> {
   void setWarning(String message) async {
     emit(FavoriteWarningState(message));
     await Future.delayed(Duration(milliseconds: 100));
-    emit(FavoriteReadyState(_currencies, _selected));
+    _updateState();
   }
 
-  int get _totalEnabledCurrencies => _currencies.where((it) => it.isEnabled).length;
+  int get _totalEnabledCurrencies =>
+      _currencies.where((it) => it.isEnabled).length;
 
   @override
   Future<void> close() {

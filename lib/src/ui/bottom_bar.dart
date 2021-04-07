@@ -61,7 +61,7 @@ class BottomNavBar extends StatelessWidget {
       items: [
         getNavigationBarItem(BottomNavItem.converter),
         getNavigationBarItem(BottomNavItem.favorites),
-        getNavigationBarItem(BottomNavItem.settings)
+        getNavigationBarItem(BottomNavItem.settings),
       ],
     );
   }

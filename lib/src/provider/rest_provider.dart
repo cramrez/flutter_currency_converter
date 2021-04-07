@@ -4,7 +4,7 @@ import 'package:flutter_currency_converter/src/provider/response/api_response.da
 import 'package:http/http.dart' as http;
 import 'package:tuple/tuple.dart';
 
-class CurrencyProvider {
+class RestProvider {
   static const String _accessKey = '4fb39af7e968e829cc39ef7f7d6fc495';
 
   static const String _baseUrl = 'data.fixer.io';
@@ -13,7 +13,7 @@ class CurrencyProvider {
 
   final http.Client _httpClient;
 
-  CurrencyProvider({http.Client? httpClient}) : _httpClient = httpClient ?? http.Client();
+  RestProvider({http.Client? httpClient}) : _httpClient = httpClient ?? http.Client();
 
   Future<Tuple2<Map<String, num>, int>> latest() async {
     final result = await _callGetApi(

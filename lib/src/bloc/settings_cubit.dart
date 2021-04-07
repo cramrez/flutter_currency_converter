@@ -9,9 +9,9 @@ class SettingsCubit extends Cubit<SettingsState> {
   late SharedPreferences prefs;
 
   late int numberOfDecimals;
+  late bool isGroupSeparatorEnabled;
   late String decimalSeparator;
   late bool isSymbolAtStart;
-  late bool isGroupSeparatorEnabled;
 
   SettingsCubit() : super(SettingsState());
 
@@ -63,7 +63,7 @@ class SettingsCubit extends Cubit<SettingsState> {
       pattern = '$pattern {symbol}';
     }
     formatter = NumberFormat(pattern, 'custom');
-    emit(SettingsUpdatedState());
+    emit(SettingsState());
   }
 
   String formatCurrency(num item, String currencySymbol) {
@@ -99,5 +99,3 @@ class SettingsCubit extends Cubit<SettingsState> {
 }
 
 class SettingsState {}
-
-class SettingsUpdatedState extends SettingsState {}
